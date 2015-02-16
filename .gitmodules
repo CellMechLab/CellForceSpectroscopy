@@ -1,0 +1,3 @@
+[submodule "SiMPlE"]
+	path = SiMPlE
+	url = https://github.com/elandini/SiMPlE.git
