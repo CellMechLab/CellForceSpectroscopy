@@ -24,7 +24,7 @@ class myWin(qtView.curveWindow):
 
         clickable1=[self.ui.radio_view,self.ui.radio_deriv]
         clickable2=[self.ui.segment]
-        editable =[self.ui.derorder,self.ui.s_mth,self.ui.s_vth,self.ui.sg_fw,self.ui.sg_fo,self.ui.plath,self.ui.lasth]
+        editable =[self.ui.derorder,self.ui.s_mth,self.ui.s_vth,self.ui.sg_fw,self.ui.sg_mm,self.ui.plath,self.ui.lasth]
         for o in clickable1:
                 QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("clicked()")), self.refreshCurve)
         for o in clickable2:
@@ -50,12 +50,12 @@ class myWin(qtView.curveWindow):
 
     def saveStats(self):
 
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Filename', './')
+        fname = QtGui.QFileDialog.getSaveFileName(self, 'Select the file for saving stats')
         if fname ==None:
             return
 
         sg_fw =self.ui.sg_fw.value()
-        sg_fo =self.ui.sg_fo.value()
+        sg_mm =self.ui.sg_mm.value()
         s_mth =self.ui.s_mth.value()
         s_vth =self.ui.s_vth.value()
         plath = self.ui.plath.value()
@@ -65,7 +65,8 @@ class myWin(qtView.curveWindow):
         out_file.write("# STATS EXPORT\n")
 
         out_file.write("# {0}:{1}\n".format('WindowSize',sg_fw))
-        out_file.write("# {0}:{1}\n".format('SGOrder',sg_fo))
+        out_file.write("# {0}:{1}\n".format('SGOrder',3))
+        out_file.write("# {0}:{1}\n".format('SlopeTH',sg_mm))
         out_file.write("# {0}:{1}\n".format('DerThreshold',s_mth))
         out_file.write("# {0}:{1}\n".format('MinLength',s_vth))
         out_file.write("# {0}:{1}\n".format('PlateauxLengthThreshold',plath))
@@ -90,7 +91,7 @@ class myWin(qtView.curveWindow):
         self.ui.grafo.clear()
         p = self.exp[dove][-1]
 
-        sg_fo =self.ui.sg_fo.value()
+        sg_mm =self.ui.sg_mm.value()
         derorder = self.ui.derorder.value()
         s_mth =self.ui.s_mth.value()
         s_vth =self.ui.s_vth.value()
@@ -117,12 +118,12 @@ class myWin(qtView.curveWindow):
             self.ui.grafo.plot(x,y,pen='k')
             if iss:
 
-                y2 = engine.getSG(y,filtwidth=sg_fw,filtorder=sg_fo,deriv=1)
+                y2 = engine.getSG(y,filtwidth=sg_fw,filtorder=3,deriv=1)
                 yc = y2[int(len(y2)/3):-int(len(y2)/6)]
                 mth = np.std(y2) * s_mth
                 details = details + ' - mth: {0} - STD[win]: {1} - STD [full]: {2}'.format(mth,np.std(yc),np.std(y2))
 
-                segs = engine.act(x,y,mainth = mth,vth = s_vth,filtwidth = sg_fw,filtorder = sg_fo,plath=plath,lasth=lasth)
+                segs = engine.act(x,y,mainth = mth,vth = s_vth,filtwidth = sg_fw,filtorder = 3,plath=plath,lasth=lasth)
                 ar = segs[0].x[0]
                 i=0
                 prevss = segs[0]
@@ -141,14 +142,14 @@ class myWin(qtView.curveWindow):
                     sx,sy = ss.getPoints()
                     self.ui.grafo.plot(sx,sy,pen=c)
             else:
-                y = engine.getSG(y,filtwidth=sg_fw,filtorder=sg_fo,deriv=0)
+                y = engine.getSG(y,filtwidth=sg_fw,filtorder=3,deriv=0)
                 self.ui.grafo.plot(x,y,pen='r')
             if autorange:
                 self.ui.grafo.autoRange()
                 if ar != None:
                     self.ui.grafo.setRange(xRange=(0,ar))
         else:
-            y = engine.getSG(y,filtwidth=sg_fw,filtorder=sg_fo,deriv=derorder)
+            y = engine.getSG(y,filtwidth=sg_fw,filtorder=3,deriv=derorder)
             self.ui.grafo.plot(x,y,pen='b')
             if autorange:
                 self.ui.grafo.autoRange()
@@ -168,7 +169,7 @@ class myWin(qtView.curveWindow):
         self.H=[]
 
         sg_fw_v =self.ui.sg_fw.value()
-        sg_fo =self.ui.sg_fo.value()
+        sg_mm =self.ui.sg_mm.value()
         derorder = self.ui.derorder.value()
         s_mth =self.ui.s_mth.value()
         s_vth =self.ui.s_vth.value()
@@ -189,11 +190,11 @@ class myWin(qtView.curveWindow):
             sg_fw = int( self.ui.sg_fw.value() * len(x)/100.0)
             if sg_fw % 2 == 0:
                 sg_fw+=1
-            y2 = engine.getSG(y,filtwidth=sg_fw,filtorder=sg_fo,deriv=1)
+            y2 = engine.getSG(y,filtwidth=sg_fw,filtorder=3,deriv=1)
             yc = y2[int(len(y2)/3):-int(len(y2)/6)]
             mth = np.std(yc) * s_mth
 
-            segs = engine.act(x,y,mainth = mth,vth = s_vth,filtwidth = sg_fw,filtorder = sg_fo,plath=plath,lasth=lasth)
+            segs = engine.act(x,y,mainth = mth,vth = s_vth,filtwidth = sg_fw,filtorder = 3,plath=plath,lasth=lasth)
 
             n,L,P,H = engine.getStat(segs)
 

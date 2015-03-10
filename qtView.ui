@@ -165,11 +165,11 @@ p, li { white-space: pre-wrap; }
       <x>10</x>
       <y>560</y>
       <width>171</width>
-      <height>81</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 1px solid silver;</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>View</string>
@@ -257,53 +257,74 @@ p, li { white-space: pre-wrap; }
       <x>190</x>
       <y>560</y>
       <width>451</width>
-      <height>80</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 1px solid silver;</string>
+     <string notr="true">border: none;</string>
     </property>
     <property name="title">
-     <string>Parameters</string>
+     <string/>
     </property>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
-       <width>445</width>
-       <height>61</height>
+       <y>10</y>
+       <width>431</width>
+       <height>71</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="3">
-       <widget class="QSpinBox" name="sg_fo">
+       <widget class="QSpinBox" name="sg_mm">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>-90</number>
         </property>
         <property name="maximum">
-         <number>10</number>
+         <number>90</number>
         </property>
         <property name="value">
-         <number>3</number>
+         <number>45</number>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
        <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
         <property name="text">
-         <string>Order</string>
+         <string>Slope (°)</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
        <widget class="QDoubleSpinBox" name="s_vth">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
@@ -320,36 +341,69 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
         <property name="text">
-         <string>MainTH</string>
+         <string>Thresh (std)</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
         <property name="text">
-         <string>VTH</string>
+         <string>MinLen [nm]</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
         <property name="text">
          <string>Window</string>
         </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="s_mth">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
@@ -369,13 +423,38 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="4">
        <widget class="QLabel" name="label_5">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+          <kerning>true</kerning>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: none;</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
         <property name="text">
-         <string>PlatTH</string>
+         <string>Zdist [nm]</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="5">
        <widget class="QDoubleSpinBox" name="plath">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="minimum">
          <double>-100000.000000000000000</double>
         </property>
@@ -389,13 +468,34 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="1" column="4">
        <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: none;</string>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
         <property name="text">
-         <string>LastTH</string>
+         <string>LastTH [pN]</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
        </widget>
       </item>
       <item row="1" column="5">
        <widget class="QDoubleSpinBox" name="lasth">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="maximum">
          <double>1000.000000000000000</double>
         </property>
@@ -406,6 +506,12 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="3">
        <widget class="QDoubleSpinBox" name="sg_fw">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">border: none;</string>
         </property>
