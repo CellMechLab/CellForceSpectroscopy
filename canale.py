@@ -5,7 +5,7 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-import sys
+import sys,os
 import pyqtgraph as pg
 import canale_view as view
 import segmentation
@@ -16,6 +16,7 @@ import savitzky_golay as sg
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
+
 
 htmlpre = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li { white-space: pre-wrap; }\n</style></head><body style=" font-family:"Ubuntu"; font-size:11pt; font-weight:400; font-style:normal;">\n<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:8pt;">'
 htmlpost = '</span></p></body></html>'
@@ -50,7 +51,7 @@ class curveWindow ( QtGui.QMainWindow ):
         pmax = len(fnames)
 
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        progress = QtGui.QProgressDialog("Opening files...", "Cancel opening", 0, pmax);
+        progress = QtGui.QProgressDialog("Opening files...", "Cancel opening", 0, pmax)
         i=0
         for fname in fnames:
             QtCore.QCoreApplication.processEvents()
@@ -105,9 +106,9 @@ class curveWindow ( QtGui.QMainWindow ):
 
         self.curve[-1].traits = s.run(self.curve[-1])
         self.curve[-1].segmentation = s
-        
-        #set here the refresh of the segments list
-        #if remainThere, after filling, go to the last segment
+
+        # set here the refresh of the segments list
+        # if remainThere, after filling, go to the last segment
         
         self.ui.lcd_N.display(len(self.curve[-1].traits))      
         
