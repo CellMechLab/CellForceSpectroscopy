@@ -9,8 +9,8 @@ import sys,os
 import pyqtgraph as pg
 import canale_view as view
 import segmentation
-from SiMPlE import curve
-from SiMPlE import experiment
+from sifork import curve
+from sifork import experiment
 import numpy as np
 import savitzky_golay as sg
 
@@ -104,6 +104,7 @@ class curveWindow ( QtGui.QMainWindow ):
         s.deltaF = self.ui.lasth.value()
         s.trorder = self.ui.derorder.value()
 
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         self.curve[-1].traits = s.run(self.curve[-1])
         self.curve[-1].segmentation = s
 
@@ -132,7 +133,7 @@ class curveWindow ( QtGui.QMainWindow ):
         self.ui.lcd_Np.display(nump)
         self.ui.lcd_Nj.display(numj)
         self.ui.lcd_Nblue.display(numb)
-        
+        QtGui.QApplication.restoreOverrideCursor()
         return True
     def changeCurve(self,row):
         self.curve = self.exp[row]
@@ -148,6 +149,7 @@ class curveWindow ( QtGui.QMainWindow ):
         self.viewCurve(autorange=True)
 
     def refreshPJ(self,where):
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         w = self.ui.pjlist.currentRow()
         
         tr = self.curve[-1].traits[w]
@@ -173,6 +175,7 @@ class curveWindow ( QtGui.QMainWindow ):
             self.ui.fil_io.setValue(1)
         else:
             self.ui.fil_io.setValue(0)
+        QtGui.QApplication.restoreOverrideCursor()
         return
         
     def setConnections(self):
@@ -182,9 +185,8 @@ class curveWindow ( QtGui.QMainWindow ):
         for o in clickable1:
                 QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("clicked()")), self.refreshCurve)
         for o in editable:
-                QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.updateCurve)
-                QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), self.updateCurve)
-        
+            QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("editingFinished()")), self.updateCurve)
+
         QtCore.QObject.connect(self.ui.bAddFile, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFile)
         QtCore.QObject.connect(self.ui.bAddFiles, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFiles)
         QtCore.QObject.connect(self.ui.bAddDir, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addDir)
@@ -195,6 +197,7 @@ class curveWindow ( QtGui.QMainWindow ):
         QtCore.QMetaObject.connectSlotsByName(self)
     
     def viewCurve(self,autorange=True):
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         isc = self.ui.radio_view.isChecked()
         ism = self.ui.radio_smooth.isChecked()
         
@@ -265,6 +268,7 @@ class curveWindow ( QtGui.QMainWindow ):
             self.ui.grafo.plot(xx,yy,pen='r')
         self.ui.labDetails.setText(htmlpre + details + htmlpost)
         self.ui.labFilename.setText(self.curve.filename)
+        QtGui.QApplication.restoreOverrideCursor()
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

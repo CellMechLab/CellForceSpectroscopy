@@ -1,5 +1,5 @@
-from SiMPlE.qt import qtView
-from SiMPlE import experiment
+from sifork.qt import qtView
+from sifork import experiment
 from PyQt4 import QtCore, QtGui
 import engine
 import numpy as np
