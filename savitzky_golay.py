@@ -1,12 +1,18 @@
 import numpy as np
 
 def getSG(y,filtwidth=21,filtorder=2,deriv=1):
+    filtwidth = int(filtwidth)
     if filtwidth < filtorder + 2:
         filtwidth = filtorder + 3
     if filtwidth % 2 == 0:
         filtwidth +=1
         #print 'WARN: window size reset to {0}'.format(filtwidth)
-    return savitzky_golay(y, filtwidth, filtorder, deriv=deriv)
+    try:
+        o = savitzky_golay(y, filtwidth, filtorder, deriv=deriv)
+    except:
+        print len(y),filtwidth,filtorder
+        return None
+    return o
     
 def savitzky_golay(y, window_size, order, deriv=0):
     r"""Smooth (and optionally differentiate) data with a Savitzky-Golay filter.

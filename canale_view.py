@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'test_view.ui'
+# Form implementation generated from reading ui file 'canale_view.ui'
 #
-# Created: Mon Mar 16 22:51:33 2015
+# Created: Wed Apr 01 19:27:04 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -372,7 +372,7 @@ class Ui_facewindow(object):
         self.fil_io.setObjectName(_fromUtf8("fil_io"))
         self.formLayout_3.setWidget(5, QtGui.QFormLayout.FieldRole, self.fil_io)
         self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(760, 420, 151, 141))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(760, 390, 151, 170))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
@@ -386,9 +386,12 @@ class Ui_facewindow(object):
         self.bAddDir = QtGui.QPushButton(self.verticalLayoutWidget)
         self.bAddDir.setObjectName(_fromUtf8("bAddDir"))
         self.verticalLayout.addWidget(self.bAddDir)
-        self.pushButton_4 = QtGui.QPushButton(self.verticalLayoutWidget)
-        self.pushButton_4.setObjectName(_fromUtf8("pushButton_4"))
-        self.verticalLayout.addWidget(self.pushButton_4)
+        self.bReset = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.bReset.setObjectName(_fromUtf8("bReset"))
+        self.verticalLayout.addWidget(self.bReset)
+        self.bDoSave = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.bDoSave.setObjectName(_fromUtf8("bDoSave"))
+        self.verticalLayout.addWidget(self.bDoSave)
         self.mainlist = QtGui.QListWidget(self.centralwidget)
         self.mainlist.setGeometry(QtCore.QRect(920, 210, 301, 351))
         font = QtGui.QFont()
@@ -438,6 +441,7 @@ class Ui_facewindow(object):
         self.bAddFile.setText(_translate("facewindow", "Load one file", None))
         self.bAddFiles.setText(_translate("facewindow", "Load Files", None))
         self.bAddDir.setText(_translate("facewindow", "Load DIR", None))
-        self.pushButton_4.setText(_translate("facewindow", "Do stats and save", None))
+        self.bReset.setText(_translate("facewindow", "Reset", None))
+        self.bDoSave.setText(_translate("facewindow", "Do stats and save", None))
 
 from pyqtgraph import PlotWidget

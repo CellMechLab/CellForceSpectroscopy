@@ -37,13 +37,58 @@ class curveWindow ( QtGui.QMainWindow ):
         self.exp = experiment.experiment()
         self.curve = curve.curve()
 
+    def statSave(self):
+
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtGui.QProgressDialog("Segmenting curves...", "Cancel operation", 0, len(self.exp))
+
+        s = segmentation.segmentation()
+        s.slope =self.ui.sg_mm.value()
+        s.mainth =self.ui.s_mth.value()
+        s.window =self.ui.sg_fw.value()
+        s.minlen =self.ui.s_vth.value()
+        s.zmin = self.ui.plath.value()
+        s.deltaF = self.ui.lasth.value()
+        s.trorder = self.ui.derorder.value()
+
+        for i in range(len(self.exp)):
+            QtCore.QCoreApplication.processEvents()
+            self.exp[i][-1].traits = s.run(self.exp[i][-1])
+            self.exp[i][-1].segmentation = s
+            progress.setValue(i)
+            if progress.wasCanceled():
+                QtGui.QApplication.restoreOverrideCursor()
+                return
+        progress.setValue(len(self.exp))
+        QtGui.QApplication.restoreOverrideCursor()
+
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtGui.QProgressDialog("Calculating stats...", "Cancel operation", 0, len(self.exp))
+        for i in range(len(self.exp)):
+            QtCore.QCoreApplication.processEvents()
+            #self.exp[i][-1].traits = s.run(self.exp[i][-1])
+            progress.setValue(i)
+            if progress.wasCanceled():
+                QtGui.QApplication.restoreOverrideCursor()
+                return
+        progress.setValue(len(self.exp))
+        QtGui.QApplication.restoreOverrideCursor()
+
+
     def addFile(self, fname = None):
         if fname == None:
             fname = QtGui.QFileDialog.getOpenFileName(self, 'Select file', './')
         self.curve.open(str(fname))
         self.refillList()
         self.viewCurve()
-        
+
+    def resetAll(self):
+        self.exp = experiment.experiment()
+        self.curve = curve.curve()
+        self.ui.mainlist.clear()
+        self.ui.pjlist.clear()
+        self.ui.grafo.clear()
+
     def addFiles(self,fnames=None):
         if fnames == None:
             fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Select files', './')
@@ -64,6 +109,7 @@ class curveWindow ( QtGui.QMainWindow ):
         QtGui.QApplication.restoreOverrideCursor()
 
         self.fileList()
+
     def addDir(self,dirname=None):
         if dirname == None:
             dirname = QtGui.QFileDialog.getExistingDirectory(self, 'Select a directory', './')
@@ -119,7 +165,7 @@ class curveWindow ( QtGui.QMainWindow ):
         numb = 0
         for i in range(len(self.curve[-1].traits)):
             t = self.curve[-1].traits[i]
-            if t.plat:
+            if t.accept:
                 if t.slope() < s.slope:
                     t.pj='P'
                     nump+=1
@@ -171,7 +217,7 @@ class curveWindow ( QtGui.QMainWindow ):
         else:
             self.ui.pj_j.setChecked(True)
             
-        if tr.plat:
+        if tr.accept:
             self.ui.fil_io.setValue(1)
         else:
             self.ui.fil_io.setValue(0)
@@ -190,8 +236,10 @@ class curveWindow ( QtGui.QMainWindow ):
         QtCore.QObject.connect(self.ui.bAddFile, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFile)
         QtCore.QObject.connect(self.ui.bAddFiles, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFiles)
         QtCore.QObject.connect(self.ui.bAddDir, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addDir)
+        QtCore.QObject.connect(self.ui.bReset, QtCore.SIGNAL(_fromUtf8("clicked()")), self.resetAll)
+        QtCore.QObject.connect(self.ui.bDoSave, QtCore.SIGNAL(_fromUtf8("clicked()")), self.statSave)
+
         QtCore.QObject.connect(self.ui.pjlist, QtCore.SIGNAL(_fromUtf8("currentRowChanged(int)")), self.refreshPJ)
-        
         QtCore.QObject.connect(self.ui.mainlist, QtCore.SIGNAL(_fromUtf8("currentRowChanged(int)")), self.changeCurve)
         
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -225,7 +273,7 @@ class curveWindow ( QtGui.QMainWindow ):
             prevss = self.curve[-1].traits[0]
             for ss in self.curve[-1].traits:
                 c = 'b'
-                if ss.plat:
+                if ss.accept:
                     if ss.last:
                         i+=1
                     if i%2 == 0:

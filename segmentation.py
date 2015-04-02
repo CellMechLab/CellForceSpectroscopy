@@ -6,9 +6,10 @@ class trait():
     def __init__(self,  x,y):
         self.x = x
         self.y = y
-        self.plat = True
+        self.accept = True
         self.last = True
         self.pj = 'P'
+
     def __sub__(s1,s2):
         x1,y1 = s1.getPoints()
         x2,y2 = s2.getPoints()
@@ -18,16 +19,20 @@ class trait():
         else:
             h = y1[1]-y2[0]
         return h
+
     def val(self):
         return np.average(self.y)
+
     def getmq(self):
         return np.polyfit(self.x, self.y, 1)
+
     def slope(self):
         m,q = self.getmq()
         return np.arctan(m)*180.0/np.pi
             
     def alen(self):
         return np.sqrt((self.x[-1]-self.x[0])**2+(self.y[-1]-self.y[0])**2)
+
     def hlen(self):
         return np.abs(self.x[-1]-self.x[0])
     
@@ -47,6 +52,7 @@ class trait():
     
         
 import savitzky_golay as sg
+
 class segmentation():
     def __init__(self):
         self.slope=45
@@ -65,16 +71,36 @@ class segmentation():
         #ifrom = np.argmax(p.f)
         x = p.z#[ifrom:]
         y = p.f#[ifrom:]
-
-        
         self.abswin = int( self.window * float(len(x))/1000.0)
-        
         y2 = sg.getSG(y,filtwidth=self.abswin,filtorder=self.filtorder,deriv=1)
         y3 = sg.getSG(y,filtwidth=self.abswin*self.delta,filtorder=self.filtorder,deriv=1)
-        
         self.absth = np.std(y2-y3) * self.mainth
         
         return self.act(x,y)
+
+    def getStat(tr):
+        L=[]
+        P=[]
+        H=[]
+        n=0
+        pL = 0
+        pMin = 0
+        prev = None
+        for s in tr:
+            if s.accept:
+                if s.last:
+                    n=n+1
+                    if n>1:
+                        pL += s.len()
+                        L.append(pL)
+                        P.append(pMin)
+                        H.append(getH(s,prev))
+                        pL = 0
+                else:
+                    pL += s.len()
+                pMin = min(s.x)
+                prev=s
+        return n-1,L,P,H
 
     def act(self,x,y):
         """    
@@ -111,12 +137,12 @@ class segmentation():
             segfound=trait(xx,yy)
             
             if self.zmin>0 and xx[0]-x[0]<self.zmin:
-                segfound.plat=False
+                segfound.accept=False
             elif self.zmin<0 and x[0]-xx[0]<self.zmin:
-                segfound.plat=False
+                segfound.accept=False
             else:
                 if segfound.hlen()<=self.minlen:
-                    segfound.plat=False
+                    segfound.accept=False
                 else:
                     if previous != None:
                         h = segfound-previous

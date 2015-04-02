@@ -11,7 +11,7 @@ import pyqtgraph as pg
 import numpy as np
 import Ui_qtView as qtView_face
 
-from SiMPlE import experiment
+from sifork import experiment
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')

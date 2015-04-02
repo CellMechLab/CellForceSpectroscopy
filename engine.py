@@ -136,10 +136,11 @@ def getStat(segs):
             if s.last:
                 n=n+1
                 if n>1:
+                    pL = s.len()
                     L.append(pL)
                     P.append(pMin)
                     H.append(getH(s,prev))
-                    pL = s.len()
+                    pL = 0
             else:
                 pL += s.len()
             pMin = min(s.x)
