@@ -1,5 +1,9 @@
 import numpy as np
 import mvobject
+try:
+    import savitzky_golay as sg
+except:
+    from .. import savitzky_golay as sg
 
 class segment(mvobject.mvobject):
     def __init__(self,x,y):   
@@ -37,6 +41,30 @@ class segment(mvobject.mvobject):
         Convert Force versus Displacement to Force versus Distance
         """
         self.z=self.z-self.f/self.k
-        
+
+    def getContactIndex(self, smooth=True):
+        y = self.f
+        if smooth:
+            y = sg.getSG (self.f, len(self.f/100), 2, 0)
+        for i in range(len(y)-1):
+            if ( ( y[i]+1 > 0) and (y[i]<0) ):
+                return i+1
+        return 0
+
+    def getArea(self):
+        """
+
+        :rtype : float
+        """
+        y = self.f
+        x = self.z
+
+        from scipy.integrate import trapz
+        i = self.getContactIndex(smooth=False)
+        return trapz(y[i:],x[i:])
+
+    def getAdhesion(self):
+        return np.max(self.f)
+
 if __name__ == "__main__":
     print 'not for direct use'

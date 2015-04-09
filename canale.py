@@ -62,18 +62,56 @@ class curveWindow ( QtGui.QMainWindow ):
         progress.setValue(len(self.exp))
         QtGui.QApplication.restoreOverrideCursor()
 
+        fname = QtGui.QFileDialog.getSaveFileName  (self, 'Select the file for saving stats',filter="Text file (*.csv *.txt)")
+        if fname ==None:
+            return
+
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         progress = QtGui.QProgressDialog("Calculating stats...", "Cancel operation", 0, len(self.exp))
+
+        cvfile = open(str(fname),"w")
+        import os.path
+        pieces = os.path.splitext(str(fname))
+        trfile = open(pieces[0]+'_traits'+pieces[1],"w")
+        import uuid
+        gid = uuid.uuid4()
+        cvfile.write("# Curve stats {0}\n".format(gid))
+        trfile.write("# Trait stats {0}\n".format(gid))
+        names = ['Slope threshold','Main der Threshold','Filtering window','Min length','Min initial position','Min step for breaking trait','Order']
+        values = [s.slope,s.mainth,s.window,s.minlen,s.zmin,s.deltaF,s.trorder]
+        for f in [cvfile,trfile]:
+            f.write("# Segmentation parameters\n")
+            for i in range(len(values)):
+                f.write("# {0}:{1}\n".format(names[i],values[i]))
+        cvfile.write("#ID;FNAME;ADHESION [pN];AREA [zJ];NTRAITS;NJUMPS;NPLATEAUX\n")
+        trfile.write("#ID;CURVEID;FNAME;LENGTH [nm];POSITION [nm];STEP [pN]\n")
         for i in range(len(self.exp)):
+            nj = 0
+            np = 0
             QtCore.QCoreApplication.processEvents()
-            #self.exp[i][-1].traits = s.run(self.exp[i][-1])
+            for j in range(1,len(self.exp[i][-1].traits)):
+                tr = self.exp[i][-1].traits[j]
+                if tr.accept:
+                    trfile.write("{0};{1};{2};".format(j,i,self.exp[i].basename))
+                    if tr.pj == 'P':
+                        np += 1
+                    else:
+                        nj += 1
+                    trfile.write("{0};{1};{2}\n".format(tr.alen(),min(tr.x),tr-self.exp[i][-1].traits[j-1]))
+
+            cvfile.write("{0};{1};{2};{3};{4};{5};{6}\n".format(i,self.exp[i].basename,self.exp[i][-1].getAdhesion(),self.exp[i][-1].getArea(),len(self.exp[i][-1].traits),nj,np))
             progress.setValue(i)
             if progress.wasCanceled():
                 QtGui.QApplication.restoreOverrideCursor()
+                cvfile.close()
+                trfile.close()
                 return
+
+        cvfile.close()
+        trfile.close()
+
         progress.setValue(len(self.exp))
         QtGui.QApplication.restoreOverrideCursor()
-
 
     def addFile(self, fname = None):
         if fname == None:
@@ -181,6 +219,7 @@ class curveWindow ( QtGui.QMainWindow ):
         self.ui.lcd_Nblue.display(numb)
         QtGui.QApplication.restoreOverrideCursor()
         return True
+
     def changeCurve(self,row):
         self.curve = self.exp[row]
         self.refillList()
