@@ -7,7 +7,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -41,7 +41,7 @@ class Ui_facewindow(object):
         self.layoutWidget = QtGui.QWidget(self.splitter_4)
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_2.setMargin(0)
+#        self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.grafo = PlotWidget(self.layoutWidget)
         self.grafo.setMinimumSize(QtCore.QSize(600, 0))
@@ -81,7 +81,7 @@ class Ui_facewindow(object):
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.layoutWidget1)
         self.verticalLayout_3.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
-        self.verticalLayout_3.setMargin(0)
+#        self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.splitter_3 = QtGui.QSplitter(self.layoutWidget1)
         self.splitter_3.setOrientation(QtCore.Qt.Horizontal)
@@ -90,7 +90,7 @@ class Ui_facewindow(object):
         self.formLayoutWidget.setObjectName(_fromUtf8("formLayoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.formLayoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setMargin(0)
+#        self.formLayout.setMargin(0)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.label = QtGui.QLabel(self.formLayoutWidget)
         font = QtGui.QFont()
@@ -242,7 +242,7 @@ class Ui_facewindow(object):
         self.formLayout_3 = QtGui.QFormLayout(self.formLayoutWidget_3)
         self.formLayout_3.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.formLayout_3.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_3.setMargin(0)
+#        self.formLayout_3.setMargin(0)
         self.formLayout_3.setObjectName(_fromUtf8("formLayout_3"))
         self.sslabel = QtGui.QLabel(self.formLayoutWidget_3)
         font = QtGui.QFont()
@@ -357,7 +357,7 @@ class Ui_facewindow(object):
         self.formLayoutWidget_2.setObjectName(_fromUtf8("formLayoutWidget_2"))
         self.formLayout_2 = QtGui.QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_2.setMargin(0)
+#        self.formLayout_2.setMargin(0)
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
         self.label_8 = QtGui.QLabel(self.formLayoutWidget_2)
         font = QtGui.QFont()
@@ -418,7 +418,7 @@ class Ui_facewindow(object):
         self.verticalLayoutWidget = QtGui.QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setMargin(0)
+#        self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.bAddFile = QtGui.QPushButton(self.verticalLayoutWidget)
         self.bAddFile.setObjectName(_fromUtf8("bAddFile"))

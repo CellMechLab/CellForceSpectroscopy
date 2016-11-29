@@ -1,4 +1,4 @@
-import segment
+from . import segment
 import logging
 import string
 
@@ -17,7 +17,7 @@ class openWorker():
             return False
         fragments = line.split(':')
         name = fragments[0]
-        post = string.join(fragments[1:],':').strip()
+        post = ':'.join(fragments[1:]).strip()
         if post.find('"')==-1:
             val = post.split(' ')
         else:
@@ -367,4 +367,4 @@ class nanoscopetxt(openWorker):
             
         return True
 if __name__ == "__main__":
-    print 'not for direct use'
+    print ('not for direct use')

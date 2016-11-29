@@ -1,5 +1,5 @@
-import mvobject
-import segment
+from . import mvobject
+from . import segment
 import logging
 import importlib
 import os
@@ -37,6 +37,8 @@ class curve(mvobject.mvobject):
             index = -1
         if index == 'down':
             index = 0
+        if len(self.segments) == 0:
+            raise (IndexError)
         return self.segments[index]
 
     def append(self,seg):
@@ -51,7 +53,7 @@ class curve(mvobject.mvobject):
             return False
 
         #search for the specific driver
-        import open_all as opa
+        from . import open_all as opa
         op = opa.opener(fname)
         try:
             parameters,info,segments=op.getOpener(driver)
@@ -103,5 +105,5 @@ class curve(mvobject.mvobject):
         return True
     
 if __name__ == "__main__":
-    print 'not for direct use'
+    print ( 'not for direct use' )
         

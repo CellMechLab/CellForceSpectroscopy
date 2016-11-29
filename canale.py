@@ -1,9 +1,6 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+_fromUtf8 = lambda s: s
 
 import sys,os
 import pyqtgraph as pg
@@ -22,14 +19,14 @@ htmlpre = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/T
 htmlpost = '</span></p></body></html>'
 
 
-class curveWindow ( QtGui.QMainWindow ):
+class curveWindow ( QtWidgets.QMainWindow ):
     iter = 0
     prev = 0
     cRosso = QtGui.QColor(255,0,0)
     cVerde = QtGui.QColor(50,255,50)
     cNero = QtGui.QColor(0,0,0)
     def __init__ ( self, parent = None ):
-        QtGui.QMainWindow.__init__( self, parent )
+        QtWidgets.QMainWindow.__init__( self, parent )
         self.setWindowTitle( 'qt-ONE-View' )
         self.ui = view.Ui_facewindow()
         self.ui.setupUi( self )
@@ -39,8 +36,8 @@ class curveWindow ( QtGui.QMainWindow ):
 
     def statSave(self):
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        progress = QtGui.QProgressDialog("Segmenting curves...", "Cancel operation", 0, len(self.exp))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtWidgets.QProgressDialog("Segmenting curves...", "Cancel operation", 0, len(self.exp))
 
         s = segmentation.segmentation()
         s.slope =self.ui.sg_mm.value()
@@ -57,21 +54,21 @@ class curveWindow ( QtGui.QMainWindow ):
             self.exp[i][-1].segmentation = s
             progress.setValue(i)
             if progress.wasCanceled():
-                QtGui.QApplication.restoreOverrideCursor()
+                QtWidgets.QApplication.restoreOverrideCursor()
                 return
         progress.setValue(len(self.exp))
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
-        fname = QtGui.QFileDialog.getSaveFileName  (self, 'Select the file for saving stats',filter="Text file (*.csv *.txt)")
-        if fname ==None:
+        fname = QtWidgets.QFileDialog.getSaveFileName  (self, 'Select the file for saving stats',filter="Text file (*.csv *.txt)")
+        if fname is None or fname is False:
             return
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        progress = QtGui.QProgressDialog("Calculating stats...", "Cancel operation", 0, len(self.exp))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtWidgets.QProgressDialog("Calculating stats...", "Cancel operation", 0, len(self.exp))
 
-        cvfile = open(str(fname),"w")
+        cvfile = open(str(fname[0]),"w")
         import os.path
-        pieces = os.path.splitext(str(fname))
+        pieces = os.path.splitext(str(fname[0]))
         trfile = open(pieces[0]+'_traits'+pieces[1],"w")
         import uuid
         gid = uuid.uuid4()
@@ -102,7 +99,7 @@ class curveWindow ( QtGui.QMainWindow ):
             cvfile.write("{0};{1};{2};{3};{4};{5};{6}\n".format(i,self.exp[i].basename,self.exp[i][-1].getAdhesion(),self.exp[i][-1].getArea(),len(self.exp[i][-1].traits),nj,np))
             progress.setValue(i)
             if progress.wasCanceled():
-                QtGui.QApplication.restoreOverrideCursor()
+                QtWidgets.QApplication.restoreOverrideCursor()
                 cvfile.close()
                 trfile.close()
                 return
@@ -111,12 +108,12 @@ class curveWindow ( QtGui.QMainWindow ):
         trfile.close()
 
         progress.setValue(len(self.exp))
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def addFile(self, fname = None):
-        if fname == None:
-            fname = QtGui.QFileDialog.getOpenFileName(self, 'Select file', './')
-        self.curve.open(str(fname))
+        if fname is None or fname is False:
+            fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', './')
+        self.curve.open(str(fname[0]))
         self.refillList()
         self.viewCurve()
 
@@ -128,36 +125,36 @@ class curveWindow ( QtGui.QMainWindow ):
         self.ui.grafo.clear()
 
     def addFiles(self,fnames=None):
-        if fnames == None:
-            fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Select files', './')
+        if fnames is None or fnames is False:
+            fnames = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select files', './')
         QtCore.QCoreApplication.processEvents()
         pmax = len(fnames)
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        progress = QtGui.QProgressDialog("Opening files...", "Cancel opening", 0, pmax)
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtWidgets.QProgressDialog("Opening files...", "Cancel opening", 0, pmax)
         i=0
         for fname in fnames:
             QtCore.QCoreApplication.processEvents()
-            self.exp.addFiles([str(fname)])
+            self.exp.addFiles([str(fname[0])])
             progress.setValue(i)
             i=i+1
             if (progress.wasCanceled()):
                 break
         progress.setValue(pmax)
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
         self.fileList()
 
     def addDir(self,dirname=None):
-        if dirname == None:
-            dirname = QtGui.QFileDialog.getExistingDirectory(self, 'Select a directory', './')
+        if dirname is None or dirname is False:
+            dirname = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a directory', './')
             if not os.path.isdir(dirname):
                 return
         QtCore.QCoreApplication.processEvents()
         pmax = len(os.listdir(dirname))
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        progress = QtGui.QProgressDialog("Opening files...", "Cancel opening", 0, pmax);
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        progress = QtWidgets.QProgressDialog("Opening files...", "Cancel opening", 0, pmax);
         i=0
         for fnamealone in os.listdir(dirname):
             #if i % 100 == 0:
@@ -169,7 +166,7 @@ class curveWindow ( QtGui.QMainWindow ):
             if (progress.wasCanceled()):
                 break
         progress.setValue(pmax)
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
         self.fileList()
     
     def fileList(self):
@@ -188,36 +185,37 @@ class curveWindow ( QtGui.QMainWindow ):
         s.deltaF = self.ui.lasth.value()
         s.trorder = self.ui.derorder.value()
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-        self.curve[-1].traits = s.run(self.curve[-1])
-        self.curve[-1].segmentation = s
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        if len(self.curve)>0:
+            self.curve[-1].traits = s.run(self.curve[-1])
+            self.curve[-1].segmentation = s
 
-        # set here the refresh of the segments list
-        # if remainThere, after filling, go to the last segment
-        
-        self.ui.lcd_N.display(len(self.curve[-1].traits))      
-        
-        self.ui.pjlist.clear()
-        nump = 0
-        numj = 0
-        numb = 0
-        for i in range(len(self.curve[-1].traits)):
-            t = self.curve[-1].traits[i]
-            if t.accept:
-                if t.slope() < s.slope:
-                    t.pj='P'
-                    nump+=1
+            # set here the refresh of the segments list
+            # if remainThere, after filling, go to the last segment
+
+            self.ui.lcd_N.display(len(self.curve[-1].traits))
+
+            self.ui.pjlist.clear()
+            nump = 0
+            numj = 0
+            numb = 0
+            for i in range(len(self.curve[-1].traits)):
+                t = self.curve[-1].traits[i]
+                if t.accept:
+                    if t.slope() < s.slope:
+                        t.pj='P'
+                        nump+=1
+                    else:
+                        t.pj='J'
+                        numj+=1
                 else:
-                    t.pj='J'
-                    numj+=1
-            else:
-                numb+=1
-            self.ui.pjlist.addItem('{0}'.format(i+1))
+                    numb+=1
+                self.ui.pjlist.addItem('{0}'.format(i+1))
 
-        self.ui.lcd_Np.display(nump)
-        self.ui.lcd_Nj.display(numj)
-        self.ui.lcd_Nblue.display(numb)
-        QtGui.QApplication.restoreOverrideCursor()
+            self.ui.lcd_Np.display(nump)
+            self.ui.lcd_Nj.display(numj)
+            self.ui.lcd_Nblue.display(numb)
+        QtWidgets.QApplication.restoreOverrideCursor()
         return True
 
     def changeCurve(self,row):
@@ -234,7 +232,7 @@ class curveWindow ( QtGui.QMainWindow ):
         self.viewCurve(autorange=True)
 
     def refreshPJ(self,where):
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         w = self.ui.pjlist.currentRow()
         
         tr = self.curve[-1].traits[w]
@@ -260,7 +258,7 @@ class curveWindow ( QtGui.QMainWindow ):
             self.ui.fil_io.setValue(1)
         else:
             self.ui.fil_io.setValue(0)
-        QtGui.QApplication.restoreOverrideCursor()
+            QtWidgets.QApplication.restoreOverrideCursor()
         return
         
     def setConnections(self):
@@ -268,99 +266,100 @@ class curveWindow ( QtGui.QMainWindow ):
         clickable1=[self.ui.radio_view,self.ui.radio_deriv,self.ui.radio_smooth]
         editable =[self.ui.derorder,self.ui.s_mth,self.ui.s_vth,self.ui.sg_fw,self.ui.sg_mm,self.ui.plath,self.ui.lasth]
         for o in clickable1:
-                QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("clicked()")), self.refreshCurve)
+            o.clicked.connect(self.refreshCurve)
         for o in editable:
-            QtCore.QObject.connect(o, QtCore.SIGNAL(_fromUtf8("editingFinished()")), self.updateCurve)
+            o.editingFinished.connect(self.updateCurve)
 
-        QtCore.QObject.connect(self.ui.bAddFile, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFile)
-        QtCore.QObject.connect(self.ui.bAddFiles, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addFiles)
-        QtCore.QObject.connect(self.ui.bAddDir, QtCore.SIGNAL(_fromUtf8("clicked()")), self.addDir)
-        QtCore.QObject.connect(self.ui.bReset, QtCore.SIGNAL(_fromUtf8("clicked()")), self.resetAll)
-        QtCore.QObject.connect(self.ui.bDoSave, QtCore.SIGNAL(_fromUtf8("clicked()")), self.statSave)
+        self.ui.bAddFile.clicked.connect(self.addFile)
+        self.ui.bAddFiles.clicked.connect(self.addFiles)
+        self.ui.bAddDir.clicked.connect(self.addDir)
+        self.ui.bReset.clicked.connect(self.resetAll)
+        self.ui.bDoSave.clicked.connect(self.statSave)
 
-        QtCore.QObject.connect(self.ui.pjlist, QtCore.SIGNAL(_fromUtf8("currentRowChanged(int)")), self.refreshPJ)
-        QtCore.QObject.connect(self.ui.mainlist, QtCore.SIGNAL(_fromUtf8("currentRowChanged(int)")), self.changeCurve)
+        self.ui.pjlist.currentRowChanged.connect(self.refreshPJ)
+        self.ui.mainlist.currentRowChanged.connect(self.changeCurve)
         
         QtCore.QMetaObject.connectSlotsByName(self)
     
     def viewCurve(self,autorange=True):
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         isc = self.ui.radio_view.isChecked()
         ism = self.ui.radio_smooth.isChecked()
         
         self.ui.grafo.clear()
-        p = self.curve[-1]
+        if len(self.curve)>0:
+            p = self.curve[-1]
 
-        #ifrom = np.argmax(p.f)
-        x = p.z#[ifrom:]
-        y = p.f#[ifrom:]
-        ar = None
+            #ifrom = np.argmax(p.f)
+            x = p.z#[ifrom:]
+            y = p.f#[ifrom:]
+            ar = None
 
-        htmlpre = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li { white-space: pre-wrap; }\n</style></head><body style=" font-family:"Ubuntu"; font-size:11pt; font-weight:400; font-style:normal;">\n<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:8pt;">'
-        htmlpost = '</span></p></body></html>'
-        details = 'N: {0}'.format(len(p.z))
-        
-        if isc:
-            self.ui.grafo.plot(x,y,pen='k')
-            #y2 = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin,deriv=0)
-            
-            #self.ui.grafo.plot(x,y2,pen='b')
-            
+            htmlpre = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li { white-space: pre-wrap; }\n</style></head><body style=" font-family:"Ubuntu"; font-size:11pt; font-weight:400; font-style:normal;">\n<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:8pt;">'
+            htmlpost = '</span></p></body></html>'
+            details = 'N: {0}'.format(len(p.z))
 
-            ar = self.curve[-1].traits[0].x[0]
-            i=0
-            prevss = self.curve[-1].traits[0]
-            for ss in self.curve[-1].traits:
-                c = 'b'
-                if ss.accept:
-                    if ss.last:
-                        i+=1
-                    if i%2 == 0:
-                        c = 'r'
-                    else:
-                        c = 'g'
-                    if ss.pj=='J':
-                        c = 'y'
-                else:
+            if isc:
+                self.ui.grafo.plot(x,y,pen='k')
+                #y2 = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin,deriv=0)
+
+                #self.ui.grafo.plot(x,y2,pen='b')
+
+
+                ar = self.curve[-1].traits[0].x[0]
+                i=0
+                prevss = self.curve[-1].traits[0]
+                for ss in self.curve[-1].traits:
                     c = 'b'
-                prevss = ss
-                tro = self.ui.derorder.value()
-                if tro==1:
-                    sx,sy = ss.getPoints(mode='lin')
-                else:
-                    sx,sy = ss.getPoints(mode='poly',polyorder=tro)
-                self.ui.grafo.plot(sx,sy,pen=c)
-                self.ui.riga = pg.LinearRegionItem(movable=False)
-                self.ui.grafo.addItem(self.ui.riga)
-            if autorange:
-                self.ui.grafo.autoRange()
-                if ar != None:
-                    self.ui.grafo.setRange(xRange=(0,ar))
-        elif ism:
-            self.ui.grafo.plot(x,y,pen='k')
-            y2 = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin,deriv=0)
-            self.ui.grafo.plot(x,y2,pen='b')
-            if autorange:
-                self.ui.grafo.autoRange()
+                    if ss.accept:
+                        if ss.last:
+                            i+=1
+                        if i%2 == 0:
+                            c = 'r'
+                        else:
+                            c = 'g'
+                        if ss.pj=='J':
+                            c = 'y'
+                    else:
+                        c = 'b'
+                    prevss = ss
+                    tro = self.ui.derorder.value()
+                    if tro==1:
+                        sx,sy = ss.getPoints(mode='lin')
+                    else:
+                        sx,sy = ss.getPoints(mode='poly',polyorder=tro)
+                    self.ui.grafo.plot(sx,sy,pen=c)
+                    self.ui.riga = pg.LinearRegionItem(movable=False)
+                    self.ui.grafo.addItem(self.ui.riga)
+                if autorange:
+                    self.ui.grafo.autoRange()
+                    if ar != None:
+                        self.ui.grafo.setRange(xRange=(0,ar))
+            elif ism:
+                self.ui.grafo.plot(x,y,pen='k')
+                y2 = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin,deriv=0)
+                self.ui.grafo.plot(x,y2,pen='b')
+                if autorange:
+                    self.ui.grafo.autoRange()
 
-        else:
-            
-            y = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin)
-            self.ui.grafo.plot(x,y,pen='b')
-            if autorange:
-                self.ui.grafo.autoRange()
+            else:
 
-            xx = np.linspace(x[0],x[-1],3)
-            yy = np.ones(3)*self.curve[-1].segmentation.absth
-            self.ui.grafo.plot(xx,yy,pen='r')
-        self.ui.labDetails.setText(htmlpre + details + htmlpost)
-        self.ui.labFilename.setText(self.curve.filename)
-        QtGui.QApplication.restoreOverrideCursor()
+                y = sg.getSG(y,filtwidth=self.curve[-1].segmentation.abswin)
+                self.ui.grafo.plot(x,y,pen='b')
+                if autorange:
+                    self.ui.grafo.autoRange()
+
+                xx = np.linspace(x[0],x[-1],3)
+                yy = np.ones(3)*self.curve[-1].segmentation.absth
+                self.ui.grafo.plot(xx,yy,pen='r')
+            self.ui.labDetails.setText(htmlpre + details + htmlpost)
+            self.ui.labFilename.setText(self.curve.filename)
+        QtWidgets.QApplication.restoreOverrideCursor()
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName( 'qt-ONE-View' )
     canale = curveWindow()
     canale.show()
-    QtCore.QObject.connect( app, QtCore.SIGNAL( 'lastWindowClosed()' ), app, QtCore.SLOT( 'quit()' ) )
+    #QtCore.QObject.connect( app, QtCore.SIGNAL( 'lastWindowClosed()' ), app, QtCore.SLOT( 'quit()' ) )
     sys.exit(app.exec_())

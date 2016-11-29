@@ -1,5 +1,5 @@
 import numpy as np
-import mvobject
+from . import mvobject
 try:
     import savitzky_golay as sg
 except:
@@ -67,4 +67,4 @@ class segment(mvobject.mvobject):
         return np.max(self.f)
 
 if __name__ == "__main__":
-    print 'not for direct use'
+    print ('not for direct use')
