@@ -126,16 +126,21 @@ class curveWindow ( QtWidgets.QMainWindow ):
 
     def addFiles(self,fnames=None):
         if fnames is None or fnames is False:
-            fnames = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select files', './')
+            q = QtWidgets.QFileDialog()
+            q.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
+            q.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+            if ( q.exec() == 1 ):
+                fnames = q.selectedFiles()
+            else:
+                return
         QtCore.QCoreApplication.processEvents()
         pmax = len(fnames)
-
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         progress = QtWidgets.QProgressDialog("Opening files...", "Cancel opening", 0, pmax)
         i=0
         for fname in fnames:
             QtCore.QCoreApplication.processEvents()
-            self.exp.addFiles([str(fname[0])])
+            self.exp.addFiles([str(fname)])
             progress.setValue(i)
             i=i+1
             if (progress.wasCanceled()):
@@ -258,7 +263,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
             self.ui.fil_io.setValue(1)
         else:
             self.ui.fil_io.setValue(0)
-            QtWidgets.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
         return
         
     def setConnections(self):

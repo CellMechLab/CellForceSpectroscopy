@@ -58,7 +58,7 @@ class curve(mvobject.mvobject):
         try:
             parameters,info,segments=op.getOpener(driver)
         except:
-            raise
+            return False
 
         if len(segments)==0:
             logging.error("Empty File {0} not appended".format(fname))
