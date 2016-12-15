@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label">
               <property name="font">
                <font>
@@ -151,7 +151,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="s_mth">
               <property name="font">
                <font>
@@ -176,7 +176,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_2">
               <property name="font">
                <font>
@@ -195,7 +195,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="s_vth">
               <property name="font">
                <font>
@@ -217,7 +217,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_3">
               <property name="font">
                <font>
@@ -236,7 +236,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <widget class="QDoubleSpinBox" name="sg_fw">
               <property name="font">
                <font>
@@ -261,7 +261,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="label_4">
               <property name="font">
                <font>
@@ -280,7 +280,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="4" column="1">
              <widget class="QSpinBox" name="sg_mm">
               <property name="font">
                <font>
@@ -302,7 +302,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_5">
               <property name="font">
                <font>
@@ -328,7 +328,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="5" column="1">
              <widget class="QDoubleSpinBox" name="plath">
               <property name="font">
                <font>
@@ -347,7 +347,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="6" column="0">
              <widget class="QLabel" name="label_6">
               <property name="font">
                <font>
@@ -369,7 +369,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="6" column="1">
              <widget class="QDoubleSpinBox" name="lasth">
               <property name="font">
                <font>
@@ -385,7 +385,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="7" column="0">
              <widget class="QLabel" name="label_7">
               <property name="font">
                <font>
@@ -407,13 +407,39 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
+            <item row="7" column="1">
              <widget class="QSpinBox" name="derorder">
               <property name="maximum">
                <number>10</number>
               </property>
               <property name="value">
                <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="font">
+               <font>
+                <family>Verdana</family>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Scope</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="cscope">
+              <property name="text">
+               <string>General</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -465,7 +491,7 @@ p, li { white-space: pre-wrap; }
                 <height>16777215</height>
                </size>
               </property>
-              <property name="numDigits">
+              <property name="digitCount">
                <number>6</number>
               </property>
               <property name="segmentStyle">
@@ -503,7 +529,7 @@ p, li { white-space: pre-wrap; }
                 <height>16777215</height>
                </size>
               </property>
-              <property name="numDigits">
+              <property name="digitCount">
                <number>6</number>
               </property>
               <property name="segmentStyle">
@@ -538,7 +564,7 @@ p, li { white-space: pre-wrap; }
                 <height>16777215</height>
                </size>
               </property>
-              <property name="numDigits">
+              <property name="digitCount">
                <number>6</number>
               </property>
               <property name="segmentStyle">
@@ -573,7 +599,7 @@ p, li { white-space: pre-wrap; }
                 <height>16777215</height>
                </size>
               </property>
-              <property name="numDigits">
+              <property name="digitCount">
                <number>5</number>
               </property>
               <property name="segmentStyle">
@@ -722,7 +748,7 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="0" column="1">
               <widget class="QLCDNumber" name="lcd_N">
-               <property name="numDigits">
+               <property name="digitCount">
                 <number>3</number>
                </property>
                <property name="segmentStyle">
@@ -751,7 +777,7 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="1" column="1">
               <widget class="QLCDNumber" name="lcd_Np">
-               <property name="numDigits">
+               <property name="digitCount">
                 <number>3</number>
                </property>
                <property name="segmentStyle">
@@ -780,7 +806,7 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="2" column="1">
               <widget class="QLCDNumber" name="lcd_Nj">
-               <property name="numDigits">
+               <property name="digitCount">
                 <number>3</number>
                </property>
                <property name="segmentStyle">
@@ -809,7 +835,7 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="3" column="1">
               <widget class="QLCDNumber" name="lcd_Nblue">
-               <property name="numDigits">
+               <property name="digitCount">
                 <number>3</number>
                </property>
                <property name="segmentStyle">

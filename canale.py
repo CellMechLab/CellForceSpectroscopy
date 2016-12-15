@@ -33,25 +33,68 @@ class curveWindow ( QtWidgets.QMainWindow ):
         self.setConnections()
         self.exp = experiment.experiment()
         self.curve = curve.curve()
+        self.noupdate = False
+        self.generalsegmentation = segmentation.segmentation()
+        self.populateGsegment()
+
+    def populateGsegment(self):
+        self.generalsegmentation.slope = self.ui.sg_mm.value()
+        self.generalsegmentation.mainth = self.ui.s_mth.value()
+        self.generalsegmentation.window = self.ui.sg_fw.value()
+        self.generalsegmentation.minlen = self.ui.s_vth.value()
+        self.generalsegmentation.zmin = self.ui.plath.value()
+        self.generalsegmentation.deltaF = self.ui.lasth.value()
+        self.generalsegmentation.trorder = self.ui.derorder.value()
+
+    def getCurrentSeg(self):
+        s = segmentation.segmentation()
+        s.slope = self.ui.sg_mm.value()
+        s.mainth = self.ui.s_mth.value()
+        s.window = self.ui.sg_fw.value()
+        s.minlen = self.ui.s_vth.value()
+        s.zmin = self.ui.plath.value()
+        s.deltaF = self.ui.lasth.value()
+        s.trorder = self.ui.derorder.value()
+        return s
+
+    def setCurrentSeg(self,s):
+        self.noupdate = True
+        s.slope = self.ui.sg_mm.setValue(s.slope)
+        self.ui.s_mth.setValue(s.mainth)
+        self.ui.sg_fw.setValue(s.window)
+        self.ui.s_vth.setValue(s.minlen)
+        self.ui.plath.setValue(s.zmin)
+        self.ui.lasth.setValue(s.deltaF)
+        self.ui.derorder.setValue(s.trorder)
+        self.noupdate = False
+
+    def chCustom(self):
+        state = self.ui.cscope.isChecked()
+        if state is True:
+            self.ui.cscope.setText('Custom')
+            self.ui.cscope.setStyleSheet('color: red;')
+            self.curve.custom = True
+            self.curve.customSegmentation = self.getCurrentSeg()
+        else:
+            self.ui.cscope.setText('General')
+            self.ui.cscope.setStyleSheet('')
+            self.curve.custom = False
 
     def statSave(self):
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         progress = QtWidgets.QProgressDialog("Segmenting curves...", "Cancel operation", 0, len(self.exp))
 
-        s = segmentation.segmentation()
-        s.slope =self.ui.sg_mm.value()
-        s.mainth =self.ui.s_mth.value()
-        s.window =self.ui.sg_fw.value()
-        s.minlen =self.ui.s_vth.value()
-        s.zmin = self.ui.plath.value()
-        s.deltaF = self.ui.lasth.value()
-        s.trorder = self.ui.derorder.value()
+        sgen = self.generalsegmentation
 
         for i in range(len(self.exp)):
             QtCore.QCoreApplication.processEvents()
-            self.exp[i][-1].traits = s.run(self.exp[i][-1])
-            self.exp[i][-1].segmentation = s
+            if self.exp[i].custom is True and self.exp[i].customSegmentation is not None:
+                self.exp[i][-1].traits = self.exp[i].customSegmentation.run(self.exp[i][-1])
+                self.exp[i][-1].segmentation = self.exp[i].customSegmentation
+            else:
+                self.exp[i][-1].traits = sgen.run(self.exp[i][-1])
+                self.exp[i][-1].segmentation = sgen
             progress.setValue(i)
             if progress.wasCanceled():
                 QtWidgets.QApplication.restoreOverrideCursor()
@@ -75,9 +118,9 @@ class curveWindow ( QtWidgets.QMainWindow ):
         cvfile.write("# Curve stats {0}\n".format(gid))
         trfile.write("# Trait stats {0}\n".format(gid))
         names = ['Slope threshold','Main der Threshold','Filtering window','Min length','Min initial position','Min step for breaking trait','Order']
-        values = [s.slope,s.mainth,s.window,s.minlen,s.zmin,s.deltaF,s.trorder]
+        values = [sgen.slope,sgen.mainth,sgen.window,sgen.minlen,sgen.zmin,sgen.deltaF,sgen.trorder]
         for f in [cvfile,trfile]:
-            f.write("# Segmentation parameters\n")
+            f.write("# Global segmentation parameters\n")
             for i in range(len(values)):
                 f.write("# {0}:{1}\n".format(names[i],values[i]))
         cvfile.write("#ID;FNAME;ADHESION [pN];AREA [zJ];NTRAITS;NJUMPS;NPLATEAUX\n")
@@ -123,6 +166,9 @@ class curveWindow ( QtWidgets.QMainWindow ):
         self.ui.mainlist.clear()
         self.ui.pjlist.clear()
         self.ui.grafo.clear()
+        self.noupdate = False
+        self.generalsegmentation = segmentation.segmentation()
+        self.populateGsegment()
 
     def addFiles(self,fnames=None):
         if fnames is None or fnames is False:
@@ -133,6 +179,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
                 fnames = q.selectedFiles()
             else:
                 return
+            #fnames = QtWidgets.QFileDialog.getOpenFileNames()[0]
         QtCore.QCoreApplication.processEvents()
         pmax = len(fnames)
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
@@ -181,14 +228,14 @@ class curveWindow ( QtWidgets.QMainWindow ):
         self.ui.mainlist.setCurrentRow(0)
         
     def refillList(self,remainThere = False):
-        s = segmentation.segmentation()
-        s.slope =self.ui.sg_mm.value()
-        s.mainth =self.ui.s_mth.value()
-        s.window =self.ui.sg_fw.value()
-        s.minlen =self.ui.s_vth.value()
-        s.zmin = self.ui.plath.value()
-        s.deltaF = self.ui.lasth.value()
-        s.trorder = self.ui.derorder.value()
+        if self.noupdate is True:
+            return
+
+        s = self.getCurrentSeg()
+        if self.curve.custom is True:
+            self.curve.customSegmentation = s
+        else:
+            self.generalsegmentation = s
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         if len(self.curve)>0:
@@ -225,14 +272,27 @@ class curveWindow ( QtWidgets.QMainWindow ):
 
     def changeCurve(self,row):
         self.curve = self.exp[row]
+
+        if self.curve.custom is True:
+            self.ui.cscope.setChecked(True)
+            self.setCurrentSeg(self.curve.customSegmentation)
+        else:
+            self.ui.cscope.setChecked(False)
+            self.setCurrentSeg(self.generalsegmentation)
+        self.chCustom()
         self.refillList()
         self.viewCurve()
         
     def updateCurve(self):
+        self.sender().setStyleSheet('')
         self.refillList(remainThere=True)
         self.viewCurve(autorange=False)
 
     def refreshCurve(self):
+        self.sender().setStyleSheet('')
+        if self.curve.custom is True:
+            self.setCurrentSeg(self.curve.customSegmentation)
+
         self.refillList()
         self.viewCurve(autorange=True)
 
@@ -265,7 +325,12 @@ class curveWindow ( QtWidgets.QMainWindow ):
             self.ui.fil_io.setValue(0)
         QtWidgets.QApplication.restoreOverrideCursor()
         return
-        
+
+    def reddish(self,val):
+        if self.noupdate is True:
+            return
+        self.sender().setStyleSheet('color:red')
+
     def setConnections(self):
         
         clickable1=[self.ui.radio_view,self.ui.radio_deriv,self.ui.radio_smooth]
@@ -274,10 +339,14 @@ class curveWindow ( QtWidgets.QMainWindow ):
             o.clicked.connect(self.refreshCurve)
         for o in editable:
             o.editingFinished.connect(self.updateCurve)
+            o.valueChanged.connect(self.reddish)
+
+        self.ui.cscope.clicked.connect(self.chCustom)
 
         self.ui.bAddFile.clicked.connect(self.addFile)
         self.ui.bAddFiles.clicked.connect(self.addFiles)
         self.ui.bAddDir.clicked.connect(self.addDir)
+
         self.ui.bReset.clicked.connect(self.resetAll)
         self.ui.bDoSave.clicked.connect(self.statSave)
 

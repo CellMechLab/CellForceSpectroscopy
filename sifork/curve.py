@@ -21,6 +21,9 @@ class curve(mvobject.mvobject):
         self.segments=[]
         self.info={}
 
+        self.custom = False
+        self.customSegmentation = None
+
         if fname != None:
             self.filename = fname
             self.basename = os.path.basename(fname)
