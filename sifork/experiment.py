@@ -12,6 +12,7 @@ class experiment(mvobject.mvobject):
         self.curves = [] #store for curves
         self.locations = [] #store for full pathnames
         self.basenames = [] #store for names
+        self.segmented = False
 
     def __iter__(self):
         return self.curves.__iter__()
@@ -22,6 +23,7 @@ class experiment(mvobject.mvobject):
         elif index in self.basenames:
             index = self.basenames.index(index)
         return self.curves[index]
+    
     def __setslice__(self,imin,imax,vals):
         i = imin
         for v in vals:
@@ -46,17 +48,17 @@ class experiment(mvobject.mvobject):
         del self.curves[index]
         del self.locations[index]
         del self.basenames[index]
-    def index(self,valore):
-        if valore in self.locations:
-            return self.locations.index(valore)
-        elif valore in self.basenames:
-            return self.basenames.index(valore)
-        raise ValueError('Not found')
+#    def index(self,valore):
+#        if valore in self.locations:
+#            return self.locations.index(valore)
+#        elif valore in self.basenames:
+#            return self.basenames.index(valore)
+#        raise ValueError('Not found')
 
     def size(self):
         return len([e for e in self.curves if e])
 
-    def append(self,obj):
+    def append(self,obj,family=1):
         if isinstance(obj,curve.curve):
             if obj:
                 if obj.filename in self.locations:
@@ -66,6 +68,9 @@ class experiment(mvobject.mvobject):
                     logging.error('Curve with basename {0} is already in the experiment. File NOT appended'.format(obj.basename))
                     return False
                 else:
+                    if obj.isEmpty() is True:
+                        logging.error('Curve with basename {0} is (almost) empty. File NOT appended'.format(obj.basename))
+                        return False
                     self.curves.append(obj)
                     self.locations.append(obj.filename)
                     self.basenames.append(obj.basename)
@@ -74,17 +79,17 @@ class experiment(mvobject.mvobject):
                 logging.warn('Curve {0} is NOT relevant to the experiment or broken. Curve NOT appended')
                 return False
         else:
-            return self.append(curve.curve(obj))
+            return self.append(curve.curve(obj,family=family))
 
-    def addFiles(self, fnames = None):
-        if fnames == None:
+    def addFiles(self, fnames = None, family = 1):
+        if fnames is None:
             return False
         for fname in fnames:
             if os.path.isfile(fname):
-                self.append(fname)
+                self.append(fname,family)
 
-    def addDirectory(self,dirname=None):
-        if dirname == None:
+    def addDirectory(self,dirname=None, family=1):
+        if dirname is None:
             return False
         if not os.path.isdir(dirname):
             logging.warn('The selected path {0} is not a valid directory'.format(dirname))
@@ -99,7 +104,7 @@ class experiment(mvobject.mvobject):
                 logging.debug( "{0}% {1}/{2}".format(100*i/pmax,i,pmax))
             fname = os.path.join(str(dirname), fnamealone)
             if os.path.isfile(fname):
-                self.append(fname)
+                self.append(fname,family)
             i+=1
 
     def saveCurves(self, dirname = None):
