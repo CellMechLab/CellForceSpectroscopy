@@ -1,11 +1,21 @@
 import numpy as np
 from . import mvobject
 from scipy.integrate import trapz
-try:
-    import savitzky_golay as sg
-except:
-    from .. import savitzky_golay as sg
 
+from scipy.signal import savgol_filter as sg
+def getSG(y,filtwidth=21,filtorder=2,deriv=1):
+    filtwidth = int(filtwidth)
+    if filtwidth < filtorder + 2:
+        filtwidth = filtorder + 3
+    if filtwidth % 2 == 0:
+        filtwidth +=1
+        #print 'WARN: window size reset to {0}'.format(filtwidth)
+    try:
+        o = sg(y, filtwidth, filtorder, deriv=deriv)
+    except:
+        print ('Error filtering',len(y),filtwidth,filtorder)
+        return y
+    return o
 
 class segment(mvobject.mvobject):
     def __init__(self, x=None, y=None):
@@ -83,7 +93,7 @@ class segment(mvobject.mvobject):
     def getContactIndex(self, smooth=True,val = 0.0):
         y = self.f
         if smooth is True:
-            y = sg.getSG(self.f, len(self.f / 100), 2, 0)
+            y = getSG(self.f, len(self.f / 100), 2, 0)
         if y[0]>=val:
             return 0
         for i in range(len(y) - 1):

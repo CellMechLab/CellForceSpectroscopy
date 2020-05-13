@@ -2,6 +2,20 @@
 
 import numpy as np
 
+from scipy.signal import savgol_filter as sg
+def getSG(y,filtwidth=21,filtorder=2,deriv=1):
+    filtwidth = int(filtwidth)
+    if filtwidth < filtorder + 2:
+        filtwidth = filtorder + 3
+    if filtwidth % 2 == 0:
+        filtwidth +=1
+        #print 'WARN: window size reset to {0}'.format(filtwidth)
+    try:
+        o = sg(y, filtwidth, filtorder, deriv=deriv)
+    except:
+        print ('Error filtering',len(y),filtwidth,filtorder)
+        return y
+    return o
 
 class trait():
     def __init__(self, x, y,imin,imax):
@@ -80,7 +94,6 @@ class trait():
         return x, y
 
 
-import savitzky_golay as sg
 
 
 class segmentation():
@@ -103,8 +116,8 @@ class segmentation():
 
     def absth(self, p):
         window = self.abswin(p)
-        y2 = sg.getSG(p.f, filtwidth=window, filtorder=self.filtorder, deriv=1)
-        y3 = sg.getSG(
+        y2 = getSG(p.f, filtwidth=window, filtorder=self.filtorder, deriv=1)
+        y3 = getSG(
             p.f,
             filtwidth=window * self.delta,
             filtorder=self.filtorder,
@@ -121,7 +134,7 @@ class segmentation():
         #identification of the steps by first derivative peaks
         #x,y=p.z,p.f
         derthresh = self.absth(p)
-        der = sg.getSG(p.f, self.abswin(p), self.filtorder, deriv=1)
+        der = getSG(p.f, self.abswin(p), self.filtorder, deriv=1)
         segments = []
 
         xi = np.arange(len(der))

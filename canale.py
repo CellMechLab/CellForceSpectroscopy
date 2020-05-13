@@ -9,9 +9,23 @@ import segmentation
 from sifork import curve
 from sifork import experiment
 import numpy as np
-from scipy.signal import savgol_filter as sg
 from scipy.optimize import curve_fit
 from outliers import smirnov_grubbs as grubbs
+
+from scipy.signal import savgol_filter as sg
+def getSG(y,filtwidth=21,filtorder=2,deriv=1):
+    filtwidth = int(filtwidth)
+    if filtwidth < filtorder + 2:
+        filtwidth = filtorder + 3
+    if filtwidth % 2 == 0:
+        filtwidth +=1
+        #print 'WARN: window size reset to {0}'.format(filtwidth)
+    try:
+        o = sg(y, filtwidth, filtorder, deriv=deriv)
+    except:
+        print ('Error filtering',len(y),filtwidth,filtorder)
+        return y
+    return o
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
@@ -21,12 +35,13 @@ htmlpre = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/T
 htmlpost = '</span></p></body></html>'
 
 
-class curveWindow ( QtWidgets.QMainWindow ):
+class CurveWindow (QtWidgets.QMainWindow):
     iter = 0
     prev = 0
     cRosso = QtGui.QColor(255,0,0)
     cVerde = QtGui.QColor(50,255,50)
     cNero = QtGui.QColor(0,0,0)
+
     def __init__ ( self, parent = None ):
         QtWidgets.QMainWindow.__init__( self, parent )
         self.setWindowTitle( 'qt-ONE-View' )
@@ -121,6 +136,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
         self.exp.segmented = True
 
     def statSave(self):
+        #XXX
         self.segmentAll()
         sgen = self.generalsegmentation
         fname = QtWidgets.QFileDialog.getSaveFileName  (self, 'Select the file for saving stats',filter="Text file (*.csv *.txt)")
@@ -199,11 +215,14 @@ class curveWindow ( QtWidgets.QMainWindow ):
             except:
                 cline.append(0)
             try:
-                cline.append(1e-3**cv['up'].getArea( reflatten=self.ui.reflatten.isChecked(),polyorder=self.ui.derorder.value()))
+                reflatten = self.ui.reflatten.isChecked()
+                poly = self.ui.derorder.value()
+                area = cv['up'].getArea( reflatten=reflatten,polyorder=poly)
+                cline.append(1.0e-3*area)
             except:
                 cline.append(0)
             try:
-                cline.append(1e-3**cv['up'].getStretchTo(float(self.ui.str_lim.value())))
+                cline.append(1.0e-3*cv['up'].getStretchTo(float(self.ui.str_lim.value())))
             except:
                 cline.append(0)
             try:
@@ -406,7 +425,11 @@ class curveWindow ( QtWidgets.QMainWindow ):
             self.ui.lab_Nblue.setText('{:}'.format(numb))
             self.ui.cFamily.setValue(self.curve.family)
             self.ui.lcd_hieght.setText('{:.2g} pN'.format(self.curve['up'].getMaxStep(self.ui.filters_group.isChecked(),[self.ui.lim_min_xtrait.value() ,self.ui.lim_max_xtrait.value() ],[self.ui.lim_min_length.value(),self.ui.lim_max_length.value()])))
-            self.ui.lcd_Area.setText('{:.2g} aJ'.format(1.0e-3*self.curve['up'].getArea(reflatten=self.ui.reflatten.isChecked(),polyorder=self.ui.derorder.value())))
+            #XXX
+            reflatten = self.ui.reflatten.isChecked()
+            polyorder = self.ui.derorder.value()
+            area = self.curve['up'].getArea(reflatten,polyorder)
+            self.ui.lcd_Area.setText('{:.2g} aJ'.format(1.0e-3*area))
             self.ui.lcd_JArea.setText('{:.2g} aJ'.format(1.0e-3*self.curve['up'].getStretchArea(self.ui.arBlue.isChecked())))
             self.ui.lcd_strA.setText('{:.2g} aJ'.format(1.0e-3*self.curve['up'].getStretchTo(float(self.ui.str_lim.value()))))
             dp = self.curve.getDetachPoint()
@@ -717,6 +740,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def viewCurve(self,autorange=True):
+        #XXX
         #QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
         ism = self.ui.radio_smooth.isChecked()
         isa = self.ui.radio_area.isChecked()
@@ -735,7 +759,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
             self.statusBar().showMessage(self.curve.filename)
 
             if isd is True:
-                der = sg.getSG(p.f, p.segmentation.abswin(p), p.segmentation.filtorder, deriv=1)
+                der = getSG(p.f, p.segmentation.abswin(p), p.segmentation.filtorder, deriv=1)
                 self.ui.grafo.plot(x,der,pen='b')
                 if autorange:
                     self.ui.grafo.autoRange()
@@ -755,7 +779,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
                     self.ui.grafo.plot(x,y,pen='k')
 
                 if ism is True:
-                    y2 = sg.getSG(y,filtwidth=self.curve['up'].segmentation.abswin(p),deriv=0)
+                    y2 = getSG(y,filtwidth=self.curve['up'].segmentation.abswin(p),deriv=0)
                     self.ui.grafo.plot(x,y2,pen='b')
                     if autorange:
                         self.ui.grafo.autoRange()
@@ -820,7 +844,7 @@ class curveWindow ( QtWidgets.QMainWindow ):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName( 'qt-ONE-View' )
-    canale = curveWindow()
+    canale = CurveWindow()
     canale.show()
     #QtCore.QObject.connect( app, QtCore.SIGNAL( 'lastWindowClosed()' ), app, QtCore.SLOT( 'quit()' ) )
     sys.exit(app.exec_())
