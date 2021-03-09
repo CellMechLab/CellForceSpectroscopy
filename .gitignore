@@ -5,3 +5,4 @@
 .idea/SingleCellForceSpectroscopy.iml
 .idea/vcs.xml
 *.pyc
+.vscode/settings.json
