@@ -13,6 +13,7 @@ from scipy.optimize import curve_fit
 from outliers import smirnov_grubbs as grubbs
 
 from scipy.signal import savgol_filter as sg
+
 def getSG(y,filtwidth=21,filtorder=2,deriv=1):
     filtwidth = int(filtwidth)
     if filtwidth < filtorder + 2:
