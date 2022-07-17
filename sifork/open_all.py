@@ -108,7 +108,7 @@ class jpktxt(openWorker):
         elif name == 'columns':
             # columns: height vDeflection smoothedCapacitiveSensorHeight capacitiveSensorHeight seriesTime time
             # fancyNames: "Height" "Vertical deflection" "Height (measured & smoothed)" "Height (measured)" "Series Time" "Segment Time"
-            zs = ['smoothedCapacitiveSensorHeight','height','capacitiveSensorHeight','strainGaugeHeight']
+            zs = ['measuredHeight','smoothedCapacitiveSensorHeight','height','capacitiveSensorHeight','strainGaugeHeight']
             for s in zs[::-1]:
                 if s in val:
                     self.chZ = val.index(s)
@@ -141,6 +141,7 @@ class jpktxt(openWorker):
         self.chZ = 0
         self.chF = 1        
         header = True
+        usePause = False
         try:
             for rigo in righe:
                 if header is True:
@@ -152,19 +153,24 @@ class jpktxt(openWorker):
                             name,val = ex    
                             self.parseHeader(name,val)
                 else:
-                    if rigo[0] != '#' and len(rigo) > len(self.newline) and self.segments[self.curseg].direction!='pause':
-                        separator = ' '
-                        if rigo.find(separator)==-1:
-                            separator='\t'
-                        datas = rigo[:-len(self.newline)].split(separator)
-                        try:
-                            xi = datas[self.chZ]
-                            yi = datas[self.chF]
-                        except:
-                            print('---cavolo---')
-                            print(rigo)
-                        self.segments[self.curseg]._x.append(float(xi)*1e9)
-                        self.segments[self.curseg]._y.append(-1.0*float(yi)*1e12)
+                    if len(self.segments)==0:
+                        self.segments.append(segment.segment())
+                        self.curseg = 0
+                        usePause = True
+                    if rigo[0] != '#' and len(rigo) > len(self.newline): 
+                        if self.segments[self.curseg].direction!='pause' or usePause is True:
+                            separator = ' '
+                            if rigo.find(separator)==-1:
+                                separator='\t'
+                            datas = rigo[:-len(self.newline)].split(separator)
+                            try:
+                                xi = datas[self.chZ]
+                                yi = datas[self.chF]
+                            except:
+                                print('---cavolo---')
+                                print(rigo)
+                            self.segments[self.curseg]._x.append(float(xi)*1e9)
+                            self.segments[self.curseg]._y.append(-1.0*float(yi)*1e12)
     
                     else:
                         ex = self.parseConfigLine(rigo,self.newline)
