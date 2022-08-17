@@ -10,7 +10,7 @@ from sifork import curve
 from sifork import experiment
 import numpy as np
 from scipy.optimize import curve_fit
-from outliers import smirnov_grubbs as grubbs
+#from outliers import smirnov_grubbs as grubbs
 
 from scipy.signal import savgol_filter as sg
 
@@ -135,7 +135,7 @@ class CurveWindow (QtWidgets.QMainWindow):
         progress.setValue(len(self.exp))
         QtWidgets.QApplication.restoreOverrideCursor()
         self.exp.segmented = True
-
+        
     def statSave(self):
         #XXX
         self.segmentAll()
